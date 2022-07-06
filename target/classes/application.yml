@@ -1,0 +1,40 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /app
+    session:
+      timeout: 1000m # 24小时 1440 分钟
+
+
+spring:
+  application:
+    name: Reggie
+  datasource:
+    druid:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://localhost:3306/reggie
+      username: root
+      password: 123456
+  mvc:
+    static-path-pattern: /**   #/static/**
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+    #    ?? address_book addressBook
+    #    user_name userName
+    map-underscore-to-camel-case: true
+  global-config:
+    db-config:
+      id-type: assign_id
+
+#  默认映射的文件夹
+#  以下均为静态资源的映射路径
+#  classpath:/META-INF/resources
+#  classpath:/resources
+#  classpath:/static
+#  classpath:/public
+#  优先顺序为：META-INF/resources>resources>static>public
+reggie:
+  path: F:\Reggie\src\main\resources\static\images\
