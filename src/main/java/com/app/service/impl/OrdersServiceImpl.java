@@ -100,6 +100,7 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
                 (addressBook.getDetail() == null ? "" : addressBook.getDetail())
         );
         this.save(orders);
+        System.out.println("aaa");
 
         // 向订单明细表插入一条数据， 多条数据
         orderDetailService.saveBatch(orderDetails);
