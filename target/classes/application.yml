@@ -17,7 +17,6 @@ spring:
       password: 123456
   mvc:
     static-path-pattern: /**   #/static/**
-
   redis:
     host: 192.168.196.129
     port: 6379
