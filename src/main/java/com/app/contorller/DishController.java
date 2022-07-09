@@ -59,8 +59,6 @@ public class DishController {
         // 精确清理 清理某个分类下面的菜品缓存
         String key = "dish_" + dishDto.getCategoryId() + "_1";
         redisTemplate.delete(key);
-
-
         return R.success("新增菜品成功");
     }
 

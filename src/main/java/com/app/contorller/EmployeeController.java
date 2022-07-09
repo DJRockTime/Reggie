@@ -9,6 +9,10 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +23,9 @@ import java.time.LocalDateTime;
 @RestController
 @RequestMapping("/employee")
 public class EmployeeController {
+
+    @Autowired
+    private CacheManager cacheManager;
 
     @Autowired
     private EmployeeService employeeService;
@@ -89,9 +96,13 @@ public class EmployeeController {
     /**
      * 新增员工
      *
-     * @param employee
-     * @return
+     * @param employee 员工信息
+     * @return R<String>
+     * @CachePut 将方法返回值放入缓存
+     * value : 缓存的名称，每个缓存名称下面可以有多个key
+     * key: 缓存的key
      */
+    @CachePut(value = "userCache", key = "#employee.id")
     @PostMapping
     public R<String> save(HttpServletRequest request, @RequestBody Employee employee) {
         log.info("add customer");
@@ -120,7 +131,12 @@ public class EmployeeController {
      * @param pageSize
      * @param name
      * @return
+     * Cacheable 在方法执行前spring查看缓存中是否有数据，如果有数据，则直接返回数据，如果没有数据，到库查询
+     * condition: 条件， 满足条件时才缓存数据
+     *
      */
+    //@Cacheable(value = "userCache", key = "#id", condition = "#result != null")
+    //@Cacheable(value = "userCache", key = "#user.id + '_' + #user.name")
     @GetMapping
     public R<Page> page(int pageNumber, int pageSize, String name) {
 
@@ -151,9 +167,13 @@ public class EmployeeController {
     /**
      * 根据id修改员工信息
      *
-     * @param employee
-     * @return
+     * @param employee 员工
+     * @return R.success
      */
+    @CacheEvict(value = "userCache", key = "#employee.id") // 参数
+    //@CacheEvict(value = "userCache", key = "#p1.id") // 参数
+    //@CacheEvict(value = "userCache", key = "#root.args[0].id") // 参数
+    //@CacheEvict(value = "userCache", key = "#result.id") // 参数
     @PutMapping
     public R<String> update(HttpServletRequest request, @RequestBody Employee employee) {
         Long empId = (Long) request.getSession().getAttribute("employee");
@@ -172,5 +192,20 @@ public class EmployeeController {
             return R.success(emp);
         }
         return R.error("没有查询到对饮员工信息");
+    }
+
+    /**
+     * 删除员工
+     * @param id 员工id
+     * @return String
+     * CacheEvict 清理指定缓存
+     */
+    @CacheEvict(value = "userCache", key = "#id") // 参数
+    //@CacheEvict(value = "userCache", key = "#p0") // 第一个参数
+    //@CacheEvict(value = "userCache", key = "#root.args[0]") // 第一个参数
+    @DeleteMapping("/{id}")
+    public R<String> deleteById(@PathVariable Long id) {
+        employeeService.removeById(id);
+        return R.success("删除成功");
     }
 }

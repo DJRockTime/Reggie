@@ -7,6 +7,9 @@ server:
 
 
 spring:
+  cache:
+    redis:
+      time-to-live: 1800000
   application:
     name: Reggie
   datasource:
@@ -18,7 +21,7 @@ spring:
   mvc:
     static-path-pattern: /**   #/static/**
   redis:
-    host: 192.168.196.129
+    host: 192.168.196.133
     port: 6379
     password:
     database: 0
