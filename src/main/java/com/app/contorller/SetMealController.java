@@ -13,6 +13,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -42,6 +44,7 @@ public class SetMealController {
      * @return String
      */
     @PostMapping
+    @CacheEvict(value = "setMealCache", allEntries = true)
     public R<String> save(@RequestBody SetMealDto setMealDto) {
 
         log.info("套餐信息：{}", setMealDto);
@@ -95,6 +98,7 @@ public class SetMealController {
      * @return String
      */
     @DeleteMapping
+    @CacheEvict(value = "setMealCache", allEntries = true)
     public R<String> delete(@RequestParam List<Long> ids) {
         setMealService.removeWithDish(ids);
         return R.success("套餐数据删除成功");
@@ -106,6 +110,8 @@ public class SetMealController {
      * @param setMeal 套餐实体
      * @return List<SetMeal>
      */
+    @GetMapping("/list")
+    @Cacheable(value = "setMealCache", key = "#setMeal.categoryId + '_' + #setMeal.status")
     public R<List<SetMeal>> list(SetMeal setMeal) {
         LambdaQueryWrapper<SetMeal> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(setMeal.getCategoryId() != null, SetMeal::getCategoryId, setMeal.getCategoryId());

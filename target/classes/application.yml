@@ -5,7 +5,6 @@ server:
     session:
       timeout: 1000m # 24小时 1440 分钟
 
-
 spring:
   cache:
     redis:

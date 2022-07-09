@@ -2,6 +2,7 @@ package com.app.common;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,7 +11,7 @@ import java.util.Map;
  * @param <T>
  */
 @Data
-public class R<T> {
+public class R<T> implements Serializable { // 实现序列化器接口，缓存数据缓存到redis中
     private Integer code; // 编码 1. 成功 0 或其他失败
 
     private String msg; // 错误信息
